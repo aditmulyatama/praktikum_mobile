@@ -58,6 +58,7 @@ class MyApp extends StatelessWidget {
                           child: TextFormField(
                             keyboardType: TextInputType.visiblePassword,
                             decoration: InputDecoration(
+
                               labelText: 'Password',
                               hintText: 'Enter your password',
                               border: OutlineInputBorder(
