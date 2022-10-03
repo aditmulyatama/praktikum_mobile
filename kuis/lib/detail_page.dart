@@ -1,43 +1,37 @@
+import 'package:flutter/painting.dart';
 import 'package:flutter/material.dart';
-import 'tourism_place.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'halaman_utama.dart';
+import 'books_data.dart';
 
+class DetailPage extends StatefulWidget {
+  final BooksData books;
 
-class HalamanDetail extends StatefulWidget {
-  final TourismPlace place;
-
-  const HalamanDetail({Key? key, required this.place}) : super(key: key);
+  const DetailPage({Key? key, required this.books}) : super(key: key);
 
   @override
-  State<HalamanDetail> createState() => _HalamanDetailState();
+  State<DetailPage> createState() => _DetailPageState();
 }
 
-class _HalamanDetailState extends State<HalamanDetail> {
+class _DetailPageState extends State<DetailPage> {
+  bool isFavorite = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: (isFavorite) ? Colors.lightBlueAccent : Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(onPressed: (){
-          setState(() {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-              return HalamanUtama();
-            }));
-          });
-        }, icon: Icon(Icons.arrow_back)),
-        title: Text('${widget.place.name}'),
+        title: Text(widget.books.title),
         actions: [
           IconButton(
             onPressed: () {
               setState(() {
-                widget.place.isFavorite = !widget.place.isFavorite;
+                isFavorite = !isFavorite;
               });
             },
-            icon: (widget.place.isFavorite)
+            icon: (isFavorite)
                 ? Icon(Icons.favorite)
                 : Icon(Icons.favorite_border),
-            color: (widget.place.isFavorite) ? Colors.pink : Colors.white,
+            color: (isFavorite) ? Colors.pink : Colors.white,
           ),
         ],
       ),
@@ -47,16 +41,7 @@ class _HalamanDetailState extends State<HalamanDetail> {
             children: [
               Container(
                 padding: EdgeInsets.all(30),
-                height: MediaQuery.of(context).size.height / 3,
-                child: ListView.builder(
-                    itemCount: widget.place.imageUrls.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: Image.network(widget.place.imageUrls[index]),
-                      );
-                    }),
+                child: Image.network(widget.books.imageLinks),
               ),
               Container(
                 padding: EdgeInsets.all(18),
@@ -64,15 +49,15 @@ class _HalamanDetailState extends State<HalamanDetail> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    textBesarBold(" > " + widget.place.name + " < "),
+                    textBesarBold(" > " + widget.books.title + " < "),
                     SizedBox(
                       height: 30,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.location_on),
-                        textBiasa(widget.place.location),
+                        Icon(Icons.person),
+                        textBiasa(widget.books.authors[0]),
                       ],
                     ),
                     // SizedBox(height: 15,),
@@ -85,7 +70,7 @@ class _HalamanDetailState extends State<HalamanDetail> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.calendar_today_rounded),
-                        textBiasa(widget.place.openDays),
+                        textBiasa(widget.books.publishedDate),
                       ],
                     ),
                     SizedBox(
@@ -94,34 +79,36 @@ class _HalamanDetailState extends State<HalamanDetail> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.access_time),
-                        textBiasa(widget.place.openTime),
+                        Icon(Icons.category_rounded),
+                        textBiasa(widget.books.categories[0]),
                       ],
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.attach_money),
-                        textBiasa(widget.place.ticketPrice),
-                      ],
+                    Container(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _launchURL(widget.books.previewLink);
+                        },
+                        child: Text("Halaman Website"),
+                      ),
                     ),
-                    SizedBox(height: 15,),
+                    SizedBox(
+                      height: 15,
+                    ),
                     Text('Deskripsi lokasi :'),
-                    Text(widget.place.description),
+                    Text(widget.books.description),
                   ],
                 ),
-              )
+              ),
+
             ],
           ),
         ),
-      )
-
+      ),
     );
   }
-
   Widget textBesarBold(String text) {
     return Text(
       text,
@@ -141,5 +128,8 @@ class _HalamanDetailState extends State<HalamanDetail> {
         fontWeight: FontWeight.bold,
       ),
     );
+  }
+  void _launchURL(_url) async {
+    if (!await launch(_url)) throw 'Could not launch $_url';
   }
 }

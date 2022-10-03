@@ -3,6 +3,7 @@ import 'tourism_place.dart';
 import 'package:flutter/painting.dart';
 import 'halaman_detail.dart';
 
+
 class HalamanUtama extends StatefulWidget {
   const HalamanUtama({Key? key}) : super(key: key);
 
@@ -15,6 +16,7 @@ class _HalamanUtamaState extends State<HalamanUtama> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Halaman Utama'),
       ),
       body: ListView.builder(
@@ -86,17 +88,19 @@ class _HalamanUtamaState extends State<HalamanUtama> {
                       ),
                     ),
                     Container(
-                      alignment: Alignment.bottomRight,
-                      child: IconButton(
-                        onPressed: (){
-                          setState(() {
-                            place.isFavorite=!place.isFavorite;
-                          });
-                        },
-                        icon: (place.isFavorite) ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
-                        color: (place.isFavorite) ? Colors.pink : Colors.white,
-                      )
-                    ),
+                        alignment: Alignment.bottomRight,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              place.isFavorite = !place.isFavorite;
+                            });
+                          },
+                          icon: (place.isFavorite)
+                              ? Icon(Icons.favorite)
+                              : Icon(Icons.favorite_border),
+                          color:
+                              (place.isFavorite) ? Colors.pink : Colors.white,
+                        )),
                   ],
                 ),
               ),
